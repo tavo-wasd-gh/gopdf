@@ -6,33 +6,29 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"html/template"
+	"log"
 
 	"github.com/tavo-wasd-gh/gopdf"
 )
 
 func main() {
-	htmlTemplate := `<h1>{{ .Message }}</h1>`
+	tmpl, err := template.New("pdf-template").Parse(`<p>{{.Content}}</p>`)
+	if err != nil {
+		log.Fatalf("failed to parse template: %v", err)
+	}
 
 	data := struct {
-		Message string
+		Content string
 	}{
-		Message: "Hello, world!",
+		Content: "Hello, World!",
 	}
 
-	pdfBytes, err := gopdf.PDF(htmlTemplate, data)
+	pdfBytes, err := gopdf.PDF(tmpl, data)
 	if err != nil {
-		fmt.Println("Error generating PDF:", err)
-		return
+		log.Fatalf("failed to generate PDF: %v", err)
 	}
 
-	err = os.WriteFile("hello_world.pdf", pdfBytes, 0644)
-	if err != nil {
-		fmt.Println("Error saving PDF:", err)
-		return
-	}
-
-	fmt.Println("PDF generated successfully: hello_world.pdf")
+	log.Printf("PDF generated successfully: %d bytes", len(pdfBytes))
 }
 ```
