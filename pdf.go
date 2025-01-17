@@ -8,14 +8,9 @@ import (
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
-func PDF(htmlTemplate string, data interface{}) ([]byte, error) {
-	template, err := template.New("pdf-template").Parse(htmlTemplate)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse template: %w", err)
-	}
-
+func PDF(tmpl *template.Template, data interface{}) ([]byte, error) {
 	var filled bytes.Buffer
-	if err := template.Execute(&filled, data); err != nil {
+	if err := tmpl.Execute(&filled, data); err != nil {
 		return nil, fmt.Errorf("failed to execute template: %w", err)
 	}
 
